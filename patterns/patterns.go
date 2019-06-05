@@ -80,6 +80,7 @@ func merge(ctx context.Context, channels ...<-chan int) <-chan int {
 
 	wg.Add(len(channels))
 	outgoingPackages := make(chan int)
+
 	multiplex := func(c <-chan int) {
 		defer wg.Done()
 		for i := range c {

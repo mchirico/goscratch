@@ -12,21 +12,36 @@ type Item struct {
 	ID            int
 	Name          string
 	PackingEffort time.Duration
+	ProcessID     int
 }
 
-func PrepareItems(ctx context.Context) <-chan Item {
+type PrepareEffort interface {
+	Process(item Item) Item
+}
+type PeI struct {
+	count int
+}
+
+func (p *PeI) Process(item Item) Item {
+	p.count += 1
+	item.ProcessID = p.count
+	return item
+
+}
+
+func PrepareItems(ctx context.Context, p PrepareEffort) <-chan Item {
 	items := make(chan Item)
 	itemsToShip := []Item{
-		Item{0, "Shirt", 1 * time.Second},
-		Item{1, "Legos", 1 * time.Second},
-		Item{2, "TV", 5 * time.Second},
-		Item{3, "Bananas", 2 * time.Second},
-		Item{4, "Hat", 1 * time.Second},
-		Item{5, "Phone", 2 * time.Second},
-		Item{6, "Plates", 3 * time.Second},
-		Item{7, "Computer", 5 * time.Second},
-		Item{8, "Pint Glass", 3 * time.Second},
-		Item{9, "Watch", 2 * time.Second},
+		Item{0, "Shirt", 1 * time.Second, 0},
+		Item{1, "Legos", 1 * time.Second, 0},
+		Item{2, "TV", 5 * time.Second, 0},
+		Item{3, "Bananas", 2 * time.Second, 0},
+		Item{4, "Hat", 1 * time.Second, 0},
+		Item{5, "Phone", 2 * time.Second, 0},
+		Item{6, "Plates", 3 * time.Second, 0},
+		Item{7, "Computer", 5 * time.Second, 0},
+		Item{8, "Pint Glass", 3 * time.Second, 0},
+		Item{9, "Watch", 2 * time.Second, 0},
 	}
 	go func() {
 		defer close(items)
@@ -34,7 +49,8 @@ func PrepareItems(ctx context.Context) <-chan Item {
 			select {
 			case <-ctx.Done():
 				return
-			case items <- item:
+			case items <- p.Process(item):
+
 			}
 		}
 	}()

@@ -14,7 +14,8 @@ func TestPackItems_Main(t *testing.T) {
 
 	start := time.Now()
 
-	items := PrepareItems(ctx)
+	pei := &PeI{}
+	items := PrepareItems(ctx, pei)
 
 	workers := make([]<-chan int, 4)
 	p := &PE{}

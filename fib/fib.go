@@ -9,6 +9,8 @@ type R struct {
 	m map[int]int
 }
 
+var r = &R{}
+
 func (r *R) Check(n int) (int, bool) {
 	r.Lock()
 	defer r.Unlock()
@@ -25,8 +27,6 @@ func (r *R) Add(n int, fib int) int {
 	r.m[n] = fib
 	return fib
 }
-
-var r = &R{}
 
 func init() {
 	r.m = map[int]int{}

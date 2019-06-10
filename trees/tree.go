@@ -1,6 +1,8 @@
 package trees
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Tree struct {
 	Name  string
@@ -46,4 +48,24 @@ func LNR(t *Tree) {
 
 	LNR(t.Right)
 
+}
+
+func LNRC(t *Tree) chan *Tree {
+
+	result := make(chan *Tree)
+	go func() {
+		defer close(result)
+
+		if t == nil {
+			result <- &Tree{}
+			return
+		}
+
+		result <- <-LNRC(t.Left)
+		fmt.Printf("%v\n", t.Name)
+
+		result <- <-LNRC(t.Right)
+
+	}()
+	return result
 }

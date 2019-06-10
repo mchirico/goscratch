@@ -30,6 +30,11 @@ func TestLNR(t *testing.T) {
 
 	tree.Left = &Tree{"left", nil, nil}
 	tree.Right = &Tree{"right", nil, nil}
+	tmp := tree.Right
+	tmp.Left = &Tree{"r left", nil, nil}
+	tmp.Right = &Tree{"r right", nil, nil}
+	tmp = tmp.Right
+	tmp.Right = &Tree{"rr right", nil, nil}
 
 	tree = tree.Left
 	tree.Left = &Tree{"left 2", nil, nil}

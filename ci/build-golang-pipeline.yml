@@ -1,0 +1,44 @@
+
+resources:
+
+- name: goscratch
+  type: git
+  source:
+    uri: https://github.com/mchirico/goscratch.git
+    branch: master
+
+###############################################################################
+
+jobs:
+
+- name: unit
+  plan:
+  - get: goscratch
+    trigger: true
+  - task: unit
+    file: goscratch/ci/unit-task.yml
+
+- name: build
+  plan:
+  - get: goscratch
+    trigger: true
+    passed: [unit]
+  - task: build
+    file: goscratch/ci/build-task.yml
+
+- name: inform
+  plan:
+    - get: goscratch
+      trigger: true
+      passed: [build]
+    - task: inform
+      file: goscratch/ci/inform-task.yml
+
+- name: docker
+  plan:
+    - get: goscratch
+      trigger: true
+      passed: [inform]
+    - task: docker
+      file: goscratch/ci/docker-task.yml
+

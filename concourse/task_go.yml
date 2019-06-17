@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: golang}
+
+inputs:
+- name: resource-tutorial
+  path: go/src/github.com/mchirico/goscratch
+
+run:
+  path: resource-tutorial/concourse/task_go.sh
+
+

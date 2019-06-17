@@ -1,0 +1,18 @@
+Ref: https://www.orsolabs.com/post/building-go-code-with-concourse/
+
+Step 1) Copy goscratch/concourse/cmd to local directory somewhere.
+
+
+Step 2)
+
+   fly --target mce login --concourse-url http://127.0.0.1:8080 -u someUser  -p someSecretPassword
+   fly --target mce sync
+
+
+Step 3)
+
+     cd goscratch/concourse/cmd
+     ./test.sh
+
+
+

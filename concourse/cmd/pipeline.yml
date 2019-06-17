@@ -1,0 +1,16 @@
+---
+resources:
+  - name: resource-tutorial
+    type: git
+    source:
+      uri: https://github.com/mchirico/goscratch.git
+      branch: master
+
+jobs:
+  - name: job-hello-world
+    public: true
+    plan:
+      - get: resource-tutorial
+      - task: hello-special
+        file: resource-tutorial/concourse/task_go.yml
+

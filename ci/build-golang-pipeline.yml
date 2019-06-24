@@ -7,6 +7,14 @@ resources:
     uri: https://github.com/mchirico/goscratch.git
     branch: master
 
+- name: goscratch-docker-image
+  type: docker-image
+  source:
+    email: ((docker-hub-email))
+    username: ((docker-hub-username))
+    password: ((docker-hub-password))
+    repository: ((docker-hub-username))/cde
+
 ###############################################################################
 
 jobs:
@@ -28,17 +36,39 @@ jobs:
 
 - name: inform
   plan:
-    - get: goscratch
-      trigger: true
-      passed: [build]
-    - task: inform
-      file: goscratch/ci/inform-task.yml
+  - get: goscratch
+    trigger: true
+    passed: [build]
+  - task: inform
+    file: goscratch/ci/inform-task.yml
 
 - name: docker
   plan:
-    - get: goscratch
-      trigger: true
-      passed: [inform]
-    - task: docker
-      file: goscratch/ci/docker-task.yml
+  - get: goscratch
+    trigger: true
+    passed: [inform]
+  - task: docker
+    file: goscratch/ci/docker-task.yml
+
+- name: publish
+  plan:
+  - get: goscratch
+    trigger: true
+    passed: [docker]
+  - put: goscratch-docker-image
+    params:
+      build: goscratch/ci/docker
+  - task: run
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: ((docker-hub-username))/goscratch
+      run:
+        path: /bin/hello-world
+        args: []
+      params:
+        NAME: ((docker-hub-username))
+
 
